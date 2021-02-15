@@ -13,15 +13,15 @@ from tools.runner import Runner
 log = logging.getLogger("main")
 
 log.info("building pipeline")
-pipeline = Gst.Pipeline.new()
-caps = Gst.Caps.from_string("audio/x-raw,format=S16LE,rate=48000,channels=2")
+pipeline: Gst.Pipeline = Gst.Pipeline.new()
+caps: Gst.Caps = Gst.Caps.from_string("audio/x-raw,format=S16LE,rate=48000,channels=2")
 
-testsrc1 = Gst.ElementFactory.make("audiotestsrc", "testsrc1")
+testsrc1: Gst.Element = Gst.ElementFactory.make("audiotestsrc", "testsrc1")
 testsrc1.set_property("is-live", True)  # (3)
 testsrc1.set_property("freq", 220)
 pipeline.add(testsrc1)
 
-mixer = Gst.ElementFactory.make("audiomixer")
+mixer: Gst.Element = Gst.ElementFactory.make("audiomixer")
 pipeline.add(mixer)
 testsrc1.link_filtered(mixer, caps)
 
@@ -42,7 +42,9 @@ def add_new_src():
     testsrc2.set_property("freq", 440)
     testsrc2.set_property("is-live", True)  # (2)
 
-    testsrc2.get_static_pad("src").add_probe(
+    # connect a data probe for logging of timestamp
+    src_pad: Gst.Pad = testsrc2.get_static_pad("src")
+    src_pad.add_probe(
         Gst.PadProbeType.BUFFER, logging_pad_probe, "testsrc2-output")
 
     pipeline.add(testsrc2)

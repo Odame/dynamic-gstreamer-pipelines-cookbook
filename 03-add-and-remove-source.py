@@ -29,15 +29,17 @@ sink = Gst.ElementFactory.make("autoaudiosink")
 pipeline.add(sink)
 mixer.link_filtered(sink, caps)
 
+# attach data probe for logging timestamps
 testsrc1.get_static_pad("src").add_probe(
     Gst.PadProbeType.BUFFER, logging_pad_probe, "testsrc1-output")
 
+# attach data probe for logging timestamps 
 mixer.get_static_pad("src").add_probe(
     Gst.PadProbeType.BUFFER, logging_pad_probe, "mixer-output")
 
-testsrc2 = None  # (2)
-capsfilter2 = None
-mixerpad = None
+testsrc2: Gst.Element = None  # (2)
+capsfilter2: Gst.Element = None
+mixerpad: Gst.Element = None
 
 
 def add_new_src():
@@ -50,6 +52,7 @@ def add_new_src():
     testsrc2.set_property("freq", 440)
     testsrc2.set_property("is-live", True)
 
+    # attach probe for logging timestamps
     testsrc2.get_static_pad("src").add_probe(
         Gst.PadProbeType.BUFFER, logging_pad_probe, "testsrc2-output")
 

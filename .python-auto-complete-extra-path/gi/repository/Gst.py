@@ -2891,7 +2891,7 @@ class Caps():
         return object
 
     @staticmethod
-    def from_string(string=None):
+    def from_string(string=None) -> 'Caps':
         """"""
         return object
 
@@ -9704,7 +9704,7 @@ class Element(Object):
         """"""
         return object
 
-    def get_static_pad(self, name=None):
+    def get_static_pad(self, name=None) -> Pad:
         """"""
         return object
 
@@ -10288,7 +10288,7 @@ class Pipeline(Bin, ChildProxy):
         return object
 
     @staticmethod
-    def new(name=None):
+    def new(name=None) -> 'Pipeline':
         """"""
         return object
 

@@ -15,23 +15,23 @@ from tools.runner import Runner
 log = logging.getLogger("main")
 
 log.info("building pipeline")
-pipeline = Gst.Pipeline.new()
-caps_audio = Gst.Caps.from_string("audio/x-raw,format=S16LE,rate=48000,channels=2")  # (11)
-caps_audio_be = Gst.Caps.from_string("audio/x-raw,format=S16BE,rate=48000,channels=2")
-caps_rtp = Gst.Caps.from_string("application/x-rtp,clock-rate=48000,media=audio,encoding-name=L16,channels=2")
+pipeline: Gst.Pipeline = Gst.Pipeline.new()
+caps_audio: Gst.Caps = Gst.Caps.from_string("audio/x-raw,format=S16LE,rate=48000,channels=2")  # (11)
+caps_audio_be: Gst.Caps = Gst.Caps.from_string("audio/x-raw,format=S16BE,rate=48000,channels=2")
+caps_rtp: Gst.Caps = Gst.Caps.from_string("application/x-rtp,clock-rate=48000,media=audio,encoding-name=L16,channels=2")
 
-testsrc = Gst.ElementFactory.make("audiotestsrc", "testsrc")
+testsrc: Gst.Element = Gst.ElementFactory.make("audiotestsrc", "testsrc")
 testsrc.set_property("is-live", True)  # (2)
 testsrc.set_property("freq", 110)
 testsrc.set_property("volume", 0.5)
 pipeline.add(testsrc)
 
-mixer = Gst.ElementFactory.make("audiomixer")
+mixer: Gst.Element = Gst.ElementFactory.make("audiomixer")
 mixer.set_property("latency", (rtp_max_jitter_mx * 1_000_000))  # (5)
 pipeline.add(mixer)
 testsrc.link_filtered(mixer, caps_audio)
 
-sink = Gst.ElementFactory.make("autoaudiosink")
+sink: Gst.Element = Gst.ElementFactory.make("autoaudiosink")
 pipeline.add(sink)
 mixer.link_filtered(sink, caps_audio)
 
@@ -42,15 +42,17 @@ mixer.get_static_pad("src").add_probe(
     Gst.PadProbeType.BUFFER, logging_pad_probe, "mixer-output")
 
 
-# udpsrc port=… ! {rtpcaps} ! rtpjitterbuffer latency=… ! rtpL16depay ! {rawcaps_be} ! audioconvert ! {rawcaps} ! …
-def create_bin(port):
+# udpsrc port=… ! {rtpcaps} ! rtpjitterbuffer latency=… ! 
+# rtpL16depay ! {rawcaps_be} ! audioconvert ! {rawcaps} ! …
+def create_bin(port) -> Gst.Bin:
     log.info("Creating RTP-Bin for Port %d" % port)
-    rxbin = Gst.Bin.new("rx-bin-%d" % port)  # (8)
+    rxbin: Gst.Bin = Gst.Bin.new("rx-bin-%d" % port)  # (8)
 
     udpsrc = Gst.ElementFactory.make("udpsrc")  # (3)
     udpsrc.set_property("port", port)
     rxbin.add(udpsrc)
 
+    # attach a data probe for logging timestamps on udpsrc
     udpsrc.get_static_pad("src").add_probe(
         Gst.PadProbeType.BUFFER, logging_pad_probe, "udpsrc-%d-output" % port)
 
@@ -80,7 +82,7 @@ def add_bin(port):
 
     log.info("Adding RTP-Bin for Port %d to the Pipeline" % port)
     pipeline.add(bin)
-    output_element = pipeline.get_by_name("out-%d" % port)  # (9)
+    output_element: Gst.Element = pipeline.get_by_name("out-%d" % port)  # (9)
     output_element.link_filtered(mixer, caps_audio)
     bin.sync_state_with_parent()  # (10)
     log.info("Added RTP-Bin for Port %d to the Pipeline" % port)
