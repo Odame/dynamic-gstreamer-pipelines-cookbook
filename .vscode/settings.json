@@ -1,0 +1,30 @@
+{
+    "python.autoComplete.extraPaths": [
+        "${workspaceFolder}/.python-auto-complete-extra-path",
+    ],
+    "python.analysis.extraPaths": [
+        "${workspaceFolder}/.python-auto-complete-extra-path",
+    ],
+    "cSpell.words": [
+        "RTCICE",
+        "RTCSDP",
+        "audiotestsrc",
+        "autoaudiosrc",
+        "conv",
+        "gstwebrtc",
+        "mlineindex",
+        "mpph",
+        "paho",
+        "rtph",
+        "rtpopuspay",
+        "rtpvp",
+        "sendrecv",
+        "unmuted",
+        "videotestsrc",
+        "vtee",
+        "webrtcdsp"
+    ],
+    "python.formatting.autopep8Args": [],
+    "python.linting.pylintEnabled": true,
+    "python.languageServer": "Pylance"
+}
