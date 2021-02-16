@@ -10119,7 +10119,7 @@ class Bin(Element, ChildProxy):
         return object
 
     @staticmethod
-    def new(name=None):
+    def new(name=None) -> 'Bin':
         """"""
         return object
 
